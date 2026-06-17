@@ -1,0 +1,13 @@
+{
+  "name": "expense-monitor-frontend",
+  "version": "1.0.0",
+  "description": "杰西亚费用监控系统 - 前端",
+  "scripts": {
+    "build": "echo 'No build step needed'",
+    "test": "echo 'No test'"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
