@@ -1,695 +1,453 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>杰西亚费用监控系统</title>
-  <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Microsoft YaHei','PingFang SC',sans-serif; }
-body { background:#f5f7fa; color:#333; min-height:100vh; }
-.header { background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%); color:white; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.15); position:sticky; top:0; z-index:100; }
-.header h1 { font-size:18px; font-weight:600; }
-.nav { background:white; padding:0 24px; display:flex; gap:0; box-shadow:0 1px 4px rgba(0,0,0,0.05); overflow-x:auto; }
-.nav-item { padding:11px 18px; cursor:pointer; font-size:13px; color:#666; border-bottom:2px solid transparent; white-space:nowrap; transition:all 0.2s; }
-.nav-item:hover { color:#1e3c72; background:#f8f9fc; }
-.nav-item.active { color:#1e3c72; border-bottom-color:#1e3c72; font-weight:600; }
-.page { padding:20px 24px; max-width:1400px; margin:0 auto; display:none; }
-.page.active { display:block; }
-.page-title { font-size:18px; font-weight:600; margin-bottom:14px; color:#1e3c72; }
-.card { background:white; border-radius:12px; padding:18px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:20px; }
-.stat-card { background:white; border-radius:12px; padding:16px 18px; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-left:4px solid #1e3c72; }
-.stat-card .label { font-size:12px; color:#888; margin-bottom:6px; }
-.stat-card .value { font-size:24px; font-weight:700; color:#1e3c72; }
-.stat-card .sub { font-size:11px; color:#aaa; margin-top:4px; }
-table { width:100%; border-collapse:collapse; font-size:13px; }
-th { background:#f8f9fc; padding:9px 10px; text-align:left; font-weight:600; color:#555; border-bottom:2px solid #e0e6ed; position:sticky; top:0; }
-td { padding:8px 10px; border-bottom:1px solid #f0f0f0; }
-tr:hover { background:#f8f9fc; }
-.btn { padding:7px 14px; border:none; border-radius:6px; cursor:pointer; font-size:13px; transition:all 0.2s; }
-.btn-primary { background:#1e3c72; color:white; }
-.btn-primary:hover { background:#15325d; }
-.btn-secondary { background:#f0f2f5; color:#555; }
-.btn-danger { background:#e74c3c; color:white; }
-.btn-sm { padding:4px 10px; font-size:12px; }
-.filter-bar { display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
-.filter-bar select, .filter-bar input { padding:5px 8px; border:1px solid #ddd; border-radius:6px; font-size:13px; }
-.filter-bar input[type="text"] { width:180px; }
-.alert { padding:10px 14px; border-radius:8px; margin-bottom:14px; font-size:13px; }
-.alert-info { background:#e8f4fd; color:#1e3c72; border:1px solid #b3d9ff; }
-.alert-success { background:#e8f8f0; color:#27ae60; border:1px solid #a3e4c0; }
-.alert-error { background:#ffe8e8; color:#e74c3c; border:1px solid #f5c6c6; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>杰西亚费用监控系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Microsoft YaHei','PingFang SC',sans-serif}
+body{background:#f5f7fa;color:#333;min-height:100vh}
+.header{background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);color:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.15);position:sticky;top:0;z-index:100}
+.header h1{font-size:18px;font-weight:600}
+.nav{background:#fff;padding:0 24px;display:flex;gap:0;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav-item{padding:11px 18px;cursor:pointer;font-size:13px;color:#666;border-bottom:2px solid transparent;white-space:nowrap;transition:.2s}
+.nav-item:hover{color:#1e3c72;background:#f8f9fc}
+.nav-item.active{color:#1e3c72;border-bottom-color:#1e3c72;font-weight:600}
+.page{padding:20px 24px;max-width:1400px;margin:0 auto;display:none}
+.page.active{display:block}
+.page-title{font-size:18px;font-weight:600;margin-bottom:14px;color:#1e3c72}
+.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:12px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid #1e3c72}
+.stat-card .label{font-size:12px;color:#888;margin-bottom:6px}
+.stat-card .value{font-size:24px;font-weight:700;color:#1e3c72}
+.stat-card .sub{font-size:11px;color:#aaa;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f8f9fc;padding:9px 10px;text-align:left;font-weight:600;color:#555;border-bottom:2px solid #e0e6ed;position:sticky;top:0}
+td{padding:8px 10px;border-bottom:1px solid #f0f0f0}
+tr:hover td{background:#f8f9fc}
+.btn{padding:7px 14px;border:none;border-radius:6px;cursor:pointer;font-size:13px;transition:.2s}
+.btn-primary{background:#1e3c72;color:#fff}.btn-primary:hover{background:#15325d}
+.btn-secondary{background:#f0f2f5;color:#555}
+.btn-danger{background:#e74c3c;color:#fff}
+.btn-sm{padding:4px 10px;font-size:12px}
+.filter-bar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.filter-bar select,.filter-bar input{padding:5px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px}
+.filter-bar input[type=text]{width:180px}
+.alert{padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:13px}
+.alert-info{background:#e8f4fd;color:#1e3c72;border:1px solid #b3d9ff}
+.alert-success{background:#e8f8f0;color:#27ae60;border:1px solid #a3e4c0}
+.alert-error{background:#ffe8e8;color:#e74c3c;border:1px solid #f5c6c6}
 
 /* Login */
-.login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%); }
-.login-box { background:white; border-radius:16px; padding:36px 32px; width:380px; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
-.login-box h2 { text-align:center; margin-bottom:20px; color:#1e3c72; font-size:20px; }
-.tab-btns { display:flex; margin-bottom:16px; border-radius:8px; overflow:hidden; border:1px solid #ddd; }
-.tab-btn { flex:1; padding:9px; border:none; background:#f8f9fc; cursor:pointer; font-size:13px; transition:all 0.2s; }
-.tab-btn.active { background:#1e3c72; color:white; }
-.form-group { margin-bottom:14px; }
-.form-group label { display:block; font-size:12px; color:#666; margin-bottom:5px; }
-.form-group input, .form-group select { width:100%; padding:9px 11px; border:1px solid #ddd; border-radius:8px; font-size:14px; }
-.form-group input:focus { outline:none; border-color:#1e3c72; }
-.btn-login { width:100%; padding:11px; background:#1e3c72; color:white; border:none; border-radius:8px; font-size:15px; cursor:pointer; transition:all 0.2s; }
-.btn-login:hover { background:#15325d; }
-.error-msg { color:#e74c3c; font-size:12px; margin-top:8px; text-align:center; min-height:18px; }
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%)}
+.login-box{background:#fff;border-radius:16px;padding:36px 32px;width:420px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-box h2{text-align:center;margin-bottom:20px;color:#1e3c72;font-size:20px}
+.tab-btns{display:flex;margin-bottom:16px;border-radius:8px;overflow:hidden;border:1px solid #ddd}
+.tab-btn{flex:1;padding:9px;border:none;background:#f8f9fc;cursor:pointer;font-size:13px;transition:.2s}
+.tab-btn.active{background:#1e3c72;color:#fff}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:#666;margin-bottom:5px}
+.form-group input,.form-group select{width:100%;padding:9px 11px;border:1px solid #ddd;border-radius:8px;font-size:14px}
+.form-group input:focus{outline:none;border-color:#1e3c72}
+.btn-login{width:100%;padding:11px;background:#1e3c72;color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;transition:.2s}
+.btn-login:hover{background:#15325d}
+.error-msg{color:#e74c3c;font-size:12px;margin-top:8px;text-align:center;min-height:18px}
 
 /* Modal */
-.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:1000; }
-.modal { background:white; border-radius:12px; padding:24px; min-width:400px; max-width:90vw; max-height:85vh; overflow-y:auto; }
-.modal h3 { margin-bottom:14px; font-size:15px; }
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;display:none}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:12px;padding:24px;min-width:400px;max-width:90vw;max-height:85vh;overflow-y:auto}
+.modal h3{margin-bottom:14px;font-size:15px}
 
 /* Import */
-.import-section { margin-bottom:20px; }
-.import-section h3 { font-size:14px; margin-bottom:10px; color:#333; }
-.file-input-wrap { margin-bottom:10px; }
-.file-input-wrap input[type="file"] { font-size:13px; }
+.import-section h3{font-size:14px;margin-bottom:10px}
 
-/* Responsive */
-@media(max-width:768px) {
-  .stats-grid { grid-template-columns:1fr 1fr; }
-  .page { padding:12px; }
-}
-  </style>
+@media(max-width:768px){.stats-grid{grid-template-columns:1fr 1fr}.page{padding:12px}}
+</style>
 </head>
+
 <body>
-
-<!-- Login Screen -->
+<!-- ===== LOGIN SCREEN ===== -->
 <div id="loginScreen" class="login-screen">
-  <div class="login-box">
-    <h2>💰 杰西亚费用监控</h2>
-    <div class="tab-btns">
-      <button class="tab-btn active" onclick="switchLoginTab('admin')">管理员登录</button>
-      <button class="tab-btn" onclick="switchLoginTab('dept')">部门登录</button>
-    </div>
-    <!-- Admin Login -->
-    <div id="adminLoginForm">
-      <div class="form-group">
-        <label>用户名</label>
-        <input type="text" id="adminUser" value="admin">
-      </div>
-      <div class="form-group">
-        <label>密码</label>
-        <input type="password" id="adminPass" value="jsy2026">
-      </div>
-      <button class="btn-login" onclick="doAdminLogin()">登录</button>
-      <div id="adminError" class="error-msg"></div>
-    </div>
-    <!-- Dept Login -->
-    <div id="deptLoginForm" style="display:none">
-      <div class="form-group">
-        <label>一级部门</label>
-        <select id="deptLoginDept1" onchange="onDept1Change()"><option value="">请选择</option></select>
-      </div>
-      <div class="form-group" id="dept2Group">
-        <label>二级部门（可选）</label>
-        <select id="deptLoginDept2"><option value="">全部</option></select>
-      </div>
-      <div class="form-group">
-        <label>密码</label>
-        <input type="password" id="deptPass" placeholder="默认 jsy1234">
-      </div>
-      <button class="btn-login" onclick="doDeptLogin()">登录</button>
-      <div id="deptError" class="error-msg"></div>
-    </div>
-  </div>
+<div class="login-box">
+<h2>💰 杰西亚费用监控</h2>
+<div class="tab-btns">
+<button class="tab-btn active" onclick="switchTab('admin')">管理员登录</button>
+<button class="tab-btn" onclick="switchTab('dept')">部门登录</button>
+</div>
+<div id="adminForm">
+<div class="form-group"><label>用户名</label><input type="text" id="aUser" value="admin"></div>
+<div class="form-group"><label>密码</label><input type="password" id="aPass" value="jsy2026"></div>
+<button class="btn-login" onclick="doLogin('admin')">登录</button>
+<div id="aErr" class="error-msg"></div>
+</div>
+<div id="deptForm" style="display:none">
+<div class="form-group"><label>一级部门</label><select id="dDept1" onchange="fillDept2()"><option value="">请选择</option></select></div>
+<div class="form-group" id="d2Group"><label>二级部门（可选）</label><select id="dDept2"><option value="">全部</option></select></div>
+<div class="form-group"><label>密码</label><input type="password" id="dPass" placeholder="默认 jsy1234"></div>
+<button class="btn-login" onclick="doLogin('dept')">登录</button>
+<div id="dErr" class="error-msg"></div>
+</div>
+</div>
 </div>
 
-<!-- App Screen -->
+<!-- ===== APP ===== -->
 <div id="appScreen" style="display:none">
-  <div class="header">
-    <h1>💰 杰西亚费用监控系统</h1>
-    <div>
-      <span id="currentUserLabel" style="margin-right:14px;font-size:13px;opacity:0.9"></span>
-      <button class="btn btn-secondary" onclick="doLogout()" style="color:#333;font-size:12px;padding:5px 12px">退出</button>
-    </div>
-  </div>
-  <div class="nav" id="navBar">
-    <div class="nav-item active" data-page="overview" onclick="switchPage('overview',this)">📊 总览</div>
-    <div class="nav-item" data-page="detail" onclick="switchPage('detail',this)">📋 逐笔明细</div>
-    <div class="nav-item" data-page="import" onclick="switchPage('import',this)" id="navImport">📥 数据导入</div>
-    <div class="nav-item" data-page="users" onclick="switchPage('users',this)" id="navUsers">👥 账号管理</div>
-    <div class="nav-item" data-page="settings" onclick="switchPage('settings',this)" id="navSettings">⚙️ 设置</div>
-  </div>
-
-  <!-- Overview Page -->
-  <div id="pg-overview" class="page active">
-    <div class="page-title">📊 费用总览</div>
-    <div class="alert alert-info" id="overviewInfo"></div>
-    <div class="stats-grid" id="overviewStats"></div>
-    <div class="card">
-      <div class="page-title" style="font-size:15px;margin-bottom:12px">月度趋势</div>
-      <canvas id="trendChart" height="110"></canvas>
-    </div>
-  </div>
-
-  <!-- Detail Page -->
-  <div id="pg-detail" class="page">
-    <div class="page-title">📋 逐笔明细</div>
-    <div class="filter-bar" id="detailFilters"></div>
-    <div class="card" style="overflow-x:auto">
-      <table>
-        <thead><tr>
-          <th>月份</th><th>一级部门</th><th>二级部门</th>
-          <th>一级科目</th><th>二级科目</th>
-          <th style="text-align:right">金额</th>
-          <th>摘要1</th><th>摘要2</th>
-        </tr></thead>
-        <tbody id="detailBody"></tbody>
-      </table>
-      <div id="detailEmpty" class="alert alert-info" style="display:none;margin-top:12px"></div>
-    </div>
-  </div>
-
-  <!-- Import Page -->
-  <div id="pg-import" class="page">
-    <div class="page-title">📥 数据导入</div>
-    <div class="alert alert-info">导入CSV格式数据。导入后所有用户可立即查看。</div>
-    <div class="card import-section">
-      <h3>导入实际数据（CSV）</h3>
-      <div class="file-input-wrap">
-        <input type="file" id="importActualFile" accept=".csv,.txt">
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
-        <label style="font-size:13px;color:#666">导入月份：</label>
-        <select id="importActualMonth" style="padding:5px 8px;border:1px solid #ddd;border-radius:6px"></select>
-      </div>
-      <button class="btn btn-primary" onclick="importActualCSV()">导入实际数据</button>
-      <div id="importActualResult" style="margin-top:10px;font-size:13px"></div>
-    </div>
-    <div class="card import-section">
-      <h3>导入预算数据（CSV）</h3>
-      <div class="file-input-wrap">
-        <input type="file" id="importBudgetFile" accept=".csv,.txt">
-      </div>
-      <button class="btn btn-primary" onclick="importBudgetCSV()">导入预算数据</button>
-      <div id="importBudgetResult" style="margin-top:10px;font-size:13px"></div>
-    </div>
-    <div class="card import-section">
-      <h3>清空数据</h3>
-      <div id="clearMonthsCheckboxes" style="margin-bottom:10px"></div>
-      <button class="btn btn-danger" onclick="clearData()">清空选中月份</button>
-    </div>
-  </div>
-
-  <!-- Users Page -->
-  <div id="pg-users" class="page">
-    <div class="page-title">👥 账号管理</div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <span style="font-size:14px;font-weight:600">部门账号列表</span>
-        <button class="btn btn-primary" onclick="showAddUserModal()">+ 添加账号</button>
-      </div>
-      <table>
-        <thead><tr><th>用户名</th><th>一级部门</th><th>二级部门</th><th>操作</th></tr></thead>
-        <tbody id="usersTableBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Settings Page -->
-  <div id="pg-settings" class="page">
-    <div class="page-title">⚙️ 系统设置</div>
-    <div class="card">
-      <div class="form-group">
-        <label>累计月份（当前显示截止月份）</label>
-        <select id="settingCumMonth" style="width:120px"></select>
-      </div>
-      <div class="form-group">
-        <label>公司名称</label>
-        <input type="text" id="settingCompanyName" style="width:200px">
-      </div>
-      <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
-    </div>
-  </div>
+<div class="header">
+<h1>💰 杰西亚费用监控系统</h1>
+<div><span id="userLabel" style="margin-right:14px;font-size:13px;opacity:.9"></span><button class="btn btn-secondary" style="font-size:12px;padding:5px 12px" onclick="logout()">退出</button></div>
 </div>
+<div class="nav" id="navBar">
+<div class="nav-item active" data-pg="overview" onclick="goPage('overview',this)">📊 总览</div>
+<div class="nav-item" data-pg="detail" onclick="goPage('detail',this)">📋 逐笔明细</div>
+<div class="nav-item" data-pg="import" id="navImport" onclick="goPage('import',this)">📥 数据导入</div>
+<div class="nav-item" data-pg="users" id="navUsers" onclick="goPage('users',this)">👥 账号管理</div>
+<div class="nav-item" data-pg="settings" id="navSettings" onclick="goPage('settings',this)">⚙️ 设置</div>
+</div>
+
+<!-- OVERVIEW -->
+<div id="pg-overview" class="page active">
+<div class="page-title">📊 费用总览</div>
+<div class="alert alert-info" id="ovInfo"></div>
+<div class="stats-grid" id="ovStats"></div>
+<div class="card"><div class="page-title" style="font-size:15px;margin-bottom:12px">月度趋势</div><canvas id="trendChart" height="110"></canvas></div>
+</div>
+
+<!-- DETAIL -->
+<div id="pg-detail" class="page">
+<div class="page-title">📋 逐笔明细</div>
+<div class="filter-bar" id="dtFilters"></div>
+<div class="card" style="overflow-x:auto">
+<table><thead><tr><th>月份</th><th>一级部门</th><th>二级部门</th><th>一级科目</th><th>二级科目</th><th style="text-align:right">金额</th><th>摘要1</th><th>摘要2</th></tr></thead>
+<tbody id="dtBody"></tbody></table>
+<div id="dtEmpty" class="alert alert-info" style="display:none;margin-top:12px"></div>
+</div>
+</div>
+
+<!-- IMPORT (Admin only) -->
+<div id="pg-import" class="page">
+<div class="page-title">📥 数据导入（仅管理员）</div>
+<div class="alert alert-info">导入CSV格式数据。导入后所有用户可立即查看。</div>
+<div class="card import-section"><h3>导入实际数据（CSV）</h3>
+<input type="file" id="impActFile" accept=".csv,.txt" style="font-size:13px;margin-bottom:10px">
+<div style="margin-bottom:10px"><select id="impActMonth" style="padding:5px 8px;border:1px solid #ddd;border-radius:6px"></select></div>
+<button class="btn btn-primary" onclick="importActual()">导入实际数据</button>
+<div id="impActRes" style="margin-top:10px;font-size:13px"></div>
+</div>
+<div class="card import-section"><h3>导入预算数据（CSV）</h3>
+<input type="file" id="impBgtFile" accept=".csv,.txt" style="font-size:13px;margin-bottom:10px">
+<button class="btn btn-primary" onclick="importBudget()">导入预算数据</button>
+<div id="impBgtRes" style="margin-top:10px;font-size:13px"></div>
+</div>
+</div>
+
+<!-- USERS (Admin only) -->
+<div id="pg-users" class="page">
+<div class="page-title">👥 账号管理</div>
+<div class="card"><table><thead><tr><th>用户名</th><th>一级部门</th><th>二级部门</th><th>角色</th></tr></thead>
+<tbody id="usBody"></tbody></table></div>
+</div>
+
+<!-- SETTINGS (Admin only) -->
+<div id="pg-settings" class="page">
+<div class="page-title">⚙️ 系统设置</div>
+<div class="card">
+<div class="form-group"><label>累计月份</label><select id="setCumMon" style="width:120px"></select></div>
+<div class="form-group"><label>公司名称</label><input type="text" id="setCname" style="width:200px"></div>
+<button class="btn btn-primary" onclick="saveSet()">保存设置</button>
+</div>
+</div>
+</div><!-- end app -->
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="data.js?v=2"></script>
 <script>
-// ========== Config ==========
-// Auto-detect environment: localhost uses proxy, production uses Render backend URL
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? '/api'   // local: same origin, served by Express
-  : 'https://jsy-expense-api.onrender.com/api';  // production: update this after Render deployment
-let AUTH_TOKEN = localStorage.getItem('expenseAuthToken') || '';
-let currentUser = null;
-let CACHE = { actuals:[], budgets:[], users:[], settings:{} };
-let _trendChart = null;
+// ========== STATE ==========
+let curUser = null;
+let _chart = null;
 
-// ========== API Helper ==========
-async function api(url, opts={}) {
-  opts.headers = opts.headers || {};
-  if (AUTH_TOKEN) opts.headers['Authorization'] = 'Bearer ' + AUTH_TOKEN;
-  if (opts.body && typeof opts.body === 'string') {
-    opts.headers['Content-Type'] = opts.headers['Content-Type'] || 'application/json';
-  }
-  const res = await fetch(API_BASE + url, opts);
-  if (res.status === 401) {
-    localStorage.removeItem('expenseAuthToken');
-    AUTH_TOKEN = '';
-    location.reload();
-    throw new Error('登录过期，请重新登录');
-  }
-  const j = await res.json();
-  if (j.error) throw new Error(j.error);
-  return j;
+// Password map (hardcoded for demo)
+const PW = { admin:'jsy2026' };
+const DEPT_PW = 'jsy1234';
+
+// ========== AUTH ==========
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(tab==='admin'?'adminForm':'deptForm').style.display='';
+  document.getElementById(tab==='admin'?'deptForm':'adminForm').style.display='none';
+  event.target.classList.add('active');
+  if(tab==='dept') fillDept1();
 }
 
-// ========== Auth ==========
-async function doAdminLogin() {
-  const username = document.getElementById('adminUser').value.trim();
-  const password = document.getElementById('adminPass').value;
-  try {
-    const res = await api('/auth/admin-login', {
-      method:'POST', body: JSON.stringify({username, password})
-    });
-    AUTH_TOKEN = res.token;
-    localStorage.setItem('expenseAuthToken', AUTH_TOKEN);
-    currentUser = res.user;
-    await loadAll();
-    showApp();
-  } catch(e) {
-    document.getElementById('adminError').textContent = e.message || '登录失败';
-  }
-}
-
-async function doDeptLogin() {
-  const dept1 = document.getElementById('deptLoginDept1').value;
-  const dept2 = document.getElementById('deptLoginDept2').value;
-  const password = document.getElementById('deptPass').value;
-  try {
-    const res = await api('/auth/dept-login', {
-      method:'POST', body: JSON.stringify({dept1, dept2, password})
-    });
-    AUTH_TOKEN = res.token;
-    localStorage.setItem('expenseAuthToken', AUTH_TOKEN);
-    currentUser = res.user;
-    await loadAll();
-    showApp();
-  } catch(e) {
-    document.getElementById('deptError').textContent = e.message || '登录失败';
-  }
-}
-
-async function populateDeptList() {
-  try {
-    const res = await api('/auth/dept-list');
-    const sel = document.getElementById('deptLoginDept1');
-    sel.innerHTML = '<option value="">请选择一级部门</option>';
-    (res.deptList||[]).forEach(d => {
-      sel.innerHTML += '<option value="'+d.dept1+'">'+d.dept1+'</option>';
-    });
-  } catch(e) { console.error('dept list failed', e); }
-}
-
-function onDept1Change() {
-  if (!CACHE.users.length) return;
-  const d1 = document.getElementById('deptLoginDept1').value;
-  const matches = CACHE.users.filter(u => u.dept1 === d1 && u.role === 'dept');
-  const d2s = [...new Set(matches.map(u => u.dept2).filter(Boolean))];
-  const sel2 = document.getElementById('deptLoginDept2');
-  sel2.innerHTML = '<option value="">全部（该一级部门所有二级部门）</option>';
-  d2s.forEach(d2 => { sel2.innerHTML += '<option value="'+d2+'">'+d2+'</option>'; });
-  document.getElementById('dept2Group').style.display = d2s.length > 0 ? 'block' : 'none';
-}
-
-function switchLoginTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)+'Login') || 
-  (document.getElementById('tabAdmin').classList.toggle('active', tab==='admin'),
-   document.getElementById('tabDept').classList.toggle('active', tab==='dept'));
-  document.getElementById('adminLoginForm').style.display = tab==='admin' ? '' : 'none';
-  document.getElementById('deptLoginForm').style.display = tab==='dept' ? '' : 'none';
-  if (tab === 'dept') populateDeptList();
-}
-
-function showApp() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display = '';
-  const label = currentUser.role==='admin' ? '管理员' :
-    (currentUser.dept1 + (currentUser.dept2 ? ' / '+currentUser.dept2 : ''));
-  document.getElementById('currentUserLabel').textContent = label;
-  // Hide admin-only nav items for dept users
-  ['navImport','navUsers','navSettings'].forEach(id => {
-    document.getElementById(id).style.display = currentUser.role==='admin' ? '' : 'none';
+function fillDept1(){
+  const sel=document.getElementById('dDept1');
+  const depts={};
+  (APP_DATA.users||[]).filter(u=>u.role==='dept').forEach(u=>{
+    if(!depts[u.dept1]) depts[u.dept1]=[];
+    if(u.dept2) depts[u.dept1].push(u.dept2);
   });
-  renderOverview();
+  sel.innerHTML='<option value="">请选择一级部门</option>';
+  Object.keys(depts).sort().forEach(d1=>sel.innerHTML+='<option>'+d1+'</option>');
 }
 
-function doLogout() {
-  localStorage.removeItem('expenseAuthToken');
-  AUTH_TOKEN = '';
-  currentUser = null;
-  document.getElementById('loginScreen').style.display = '';
-  document.getElementById('appScreen').style.display = 'none';
-  // Reset login tab
-  switchLoginTab('admin');
+function fillDept2(){
+  const d1=document.getElementById('dDept1').value;
+  if(!d1)return;
+  const d2s=[...new Set((APP_DATA.users||[]).filter(u=>u.role==='dept'&&u.dept1===d1).map(u=>u.dept2).filter(Boolean))];
+  const s=document.getElementById('dDept2');
+  s.innerHTML='<option value="">全部</option>';
+  d2s.forEach(d=>s.innerHTML+='<option>'+d+'</option>');
+  document.getElementById('d2Group').style.display=d2s.length?'block':'none';
 }
 
-function switchPage(page, navEl) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('pg-'+page).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (navEl) navEl.classList.add('active');
-  if (page==='overview') renderOverview();
-  if (page==='detail') renderDetail();
-  if (page==='users') renderUsers();
-  if (page==='settings') renderSettings();
+function doLogin(type){
+  let user=null;
+  if(type==='admin'){
+    const u=document.getElementById('aUser').value.trim();
+    const p=document.getElementById('aPass').value;
+    if(PW[u]===p){
+      user={username:u,role:'admin'};
+      document.getElementById('aErr').textContent='';
+    }else{
+      document.getElementById('aErr').textContent='用户名或密码错误';return;
+    }
+  }else{
+    const d1=document.getElementById('dDept1').value;
+    const d2=document.getElementById('dDept2')?.value||'';
+    const p=document.getElementById('dPass').value;
+    if(p!==DEPT_PW){document.getElementById('dErr').textContent='密码错误';return;}
+    // Find matching dept user
+    const match=(APP_DATA.users||[]).find(u=>
+      u.role==='dept'&&u.dept1===d1&&(d2?u.dept2===d2:!u.dept2)
+    );
+    if(match){
+      user={username:match.username,role:'dept',dept1:d1,dept2:d2};
+      document.getElementById('dErr').textContent='';
+    }else{
+      document.getElementById('dErr').textContent='未找到该部门账号';return;
+    }
+  }
+  curUser=user;
+  showApp();
 }
 
-// ========== Data Loading ==========
-async function loadAll() {
-  const [aRes, bRes, uRes, sRes] = await Promise.all([
-    api('/actuals'),
-    api('/budgets'),
-    api('/users'),
-    api('/settings')
-  ]);
-  CACHE = {
-    actuals: aRes.actuals || [],
-    budgets: bRes.budgets || [],
-    users: uRes.users || [],
-    settings: sRes.settings || {}
-  };
+function logout(){curUser=null;
+  document.getElementById('loginScreen').style.display='';
+  document.getElementById('appScreen').style.display='none';
 }
 
-// ========== Overview ==========
-function renderOverview() {
-  const cumMonth = CACHE.settings.cumMonth || 5;
-  const cumLabel = '累计至'+cumMonth+'月';
-  const actuals = CACHE.actuals.filter(r => r.month <= cumMonth);
-  const budgets = CACHE.budgets.filter(r => r.month <= cumMonth);
-  const totalAct = actuals.reduce((s,r)=>s+r.amount, 0);
-  const totalBgt = budgets.reduce((s,r)=>s+r.amount, 0);
-  const rate = totalBgt > 0 ? (totalAct/totalBgt*100).toFixed(1) : 0;
-  const overCount = CACHE.actuals.filter(r => r.month <= cumMonth).length;
+function showApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appScreen').style.display='';
+  const lbl=curUser.role==='admin'?'管理员':
+    (curUser.dept1+(curUser.dept2?' / ':'')+(curUser.dept2||''));
+  document.getElementById('userLabel').textContent=lbl;
+  ['navImport','navUsers','navSettings'].forEach(id=>{
+    document.getElementById(id).style.display=curUser.role==='admin'?'':'none';
+  });
+  renderOv();
+}
 
-  const label = currentUser.role==='admin' ? '管理员视图 · '+cumLabel :
-    (currentUser.dept1 + (currentUser.dept2?' / ':'')+ (currentUser.dept2||'') + ' · '+cumLabel);
-  document.getElementById('overviewInfo').textContent = label + ' · 共 '+overCount+' 条记录';
+function goPage(pg,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pg-'+pg).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  if(pg==='overview')renderOv();
+  if(pg==='detail')renderDt();
+  if(pg==='users')renderUs();
+  if(pg==='settings')renderSet();
+}
 
-  document.getElementById('overviewStats').innerHTML =
-    '<div class="stat-card"><div class="label">预算总额</div><div class="value">¥'+numFmt(totalBgt)+'</div></div>'+
-    '<div class="stat-card"><div class="label">实际总额</div><div class="value">¥'+numFmt(totalAct)+'</div></div>'+
-    '<div class="stat-card"><div class="label">执行率</div><div class="value">'+(rate>100?'<span style="color:#e74c3c">':'')+rate+'%'+'</span></div><div class="sub">'+(rate>100?'⚠️ 超预算':'✅ 在预算内')+'</div></div>';
+// ========== DATA HELPERS ==========
+function getAct(){
+  let d=APP_DATA.actuals||[];
+  if(curUser&&curUser.role==='dept'){
+    d=d.filter(r=>r.dept1===curUser.dept1);
+    if(curUser.dept2)d=d.filter(r=>r.dept2===curUser.dept2);
+  }
+  return d;
+}
+function getBgt(){
+  let d=APP_DATA.budgets||[];
+  if(curUser&&curUser.role==='dept'){
+    d=d.filter(r=>r.dept1===curUser.dept1);
+    if(curUser.dept2)d=d.filter(r=>r.dept2===curUser.dept2);
+  }
+  return d;
+}
+
+// ========== OVERVIEW ==========
+function renderOv(){
+  const s=APP_DATA.settings||{};
+  const cm=s.cumMonth||5;
+  const act=getAct().filter(r=>r.month<=cm);
+  const bgt=getBgt().filter(r=>r.month<=cm);
+  const tA=act.reduce((s,r)=>s+r.amount,0);
+  const tB=bgt.reduce((s,r)=>s+r.amount,0);
+  const rate=tB>0?(tA/tB*100).toFixed(1):0;
+
+  const info=curUser.role==='admin'?('管理员视图 · 累计至'+cm+'月'):
+    ((curUser.dept1||'')+' · 累计至'+cm+'月');
+  document.getElementById('ovInfo').textContent=info+' · 共 '+act.length+' 条记录';
+
+  document.getElementById('ovStats').innerHTML=
+    '<div class="stat-card"><div class="label">预算总额</div><div class="value">¥'+fmt(tB)+'</div></div>'+
+    '<div class="stat-card"><div class="label">实际总额</div><div class="value">¥'+fmt(tA)+'</div></div>'+
+    '<div class="stat-card"><div class="label">执行率</div><div class="value">'+(rate>100?'<span style="color:#e74c3c">':'')+rate+'%'+'</span></div>'+
+    '<div class="sub">'+(rate>100?'⚠️ 超预算':'✅ 在预算内')+'</div></div>';
 
   // Trend chart
-  const byMonth = {};
-  CACHE.actuals.forEach(r => {
-    if (!byMonth[r.month]) byMonth[r.month] = {act:0, bgt:0};
-    byMonth[r.month].act += r.amount;
+  const byM={};
+  APP_DATA.actuals.forEach(r=>{
+    if(!byM[r.month])byM[r.month]={a:0,b:0};
+    byM[r.month].a+=r.amount;
   });
-  CACHE.budgets.forEach(r => {
-    if (!byMonth[r.month]) byMonth[r.month] = {act:0, bgt:0};
-    byMonth[r.month].bgt += r.amount;
+  APP_DATA.budgets.forEach(r=>{
+    if(!byM[r.month])byM[r.month]={a:0,b:0};
+    byM[r.month].b+=r.amount;
   });
-  const months = Object.keys(byMonth).sort((a,b)=>a-b);
-  if (months.length > 0 && typeof Chart !== 'undefined') {
-    const ctx = document.getElementById('trendChart').getContext('2d');
-    if (_trendChart) _trendChart.destroy();
-    _trendChart = new Chart(ctx, {
-      type:'bar',
-      data:{
-        labels: months.map(m=>m+'月'),
+  const ms=Object.keys(byM).sort((a,b)=>a-b);
+  if(ms.length&&typeof Chart!=='undefined'){
+    const ctx=document.getElementById('trendChart').getContext('2d');
+    if(_chart)_chart.destroy();
+    _chart=new Chart(ctx,{type:'bar',
+      data:{labels:ms.map(m=>m+'月'),
         datasets:[
-          {label:'实际', data:months.map(m=>byMonth[m].act), backgroundColor:'#1e3c72'},
-          {label:'预算', data:months.map(m=>byMonth[m].bgt), backgroundColor:'#27ae60'}
-        ]
-      },
-      options:{ responsive:true, maintainAspectRatio:false,
-        plugins:{legend:{position:'top'}},
-        scales:{y:{beginAtZero:true}}
-      }
+          {label:'实际',data:ms.map(m=>byM[m].a),backgroundColor:'#1e3c72'},
+          {label:'预算',data:ms.map(m=>byM[m].b),backgroundColor:'#27ae60'}
+        ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true}}}
     });
   }
 }
 
-// ========== Detail ==========
-function renderDetail() {
-  const depts1 = [...new Set(CACHE.actuals.map(r=>r.dept1))].sort();
-  const subjects1 = [...new Set(CACHE.actuals.map(r=>r.subject1))].sort();
-  document.getElementById('detailFilters').innerHTML =
-    '<select id="fMonth" onchange="filterDetail()"><option value="">全部月份</option>'+
-    [2,3,4,5,6].map(m=>'<option value="'+m+'">'+m+'月</option>').join('')+'</select>'+
-    '<select id="fDept1" onchange="filterDetail()"><option value="">全部一级部门</option>'+
-    depts1.map(d=>'<option value="'+d+'">'+d+'</option>').join('')+'</select>'+
-    '<input type="text" id="fKeyword" placeholder="搜索摘要..." oninput="filterDetail()">'+
-    '<button class="btn btn-secondary btn-sm" onclick="exportDetailCSV()">导出CSV</button>';
-  filterDetail();
+// ========== DETAIL ==========
+function renderDt(){
+  const act=getAct();
+  const d1s=[...new Set(act.map(r=>r.dept1))].sort();
+  const fBar=document.getElementById('dtFilters');
+  fBar.innerHTML='<select id="fMon" onchange="filterDt()"><option value="">全部月份</option>'+
+    [2,3,4,5,6].map(m=>'<option>'+m+'月</option>').join('')+'</select>'+
+    '<select id="fD1" onchange="filterDt()"><option value="">全部一级部门</option>'+
+    d1s.map(d=>'<option>'+d+'</option>').join('')+'</select>'+
+    '<input type="text" id="fKw" placeholder="搜索摘要..." oninput="filterDt()" style="width:180px">'+
+    ' <button class="btn btn-secondary btn-sm" onclick="expCSV()">导出CSV</button>';
+  filterDt();
 }
 
-function filterDetail() {
-  let data = CACHE.actuals;
-  if (currentUser.role === 'dept') {
-    data = data.filter(r => r.dept1 === currentUser.dept1);
-    if (currentUser.dept2) data = data.filter(r => r.dept2 === currentUser.dept2);
-  }
-  const month = document.getElementById('fMonth')?.value;
-  const dept1 = document.getElementById('fDept1')?.value;
-  const kw = (document.getElementById('fKeyword')?.value||'').toLowerCase();
-  if (month) data = data.filter(r=>r.month==parseInt(month));
-  if (dept1) data = data.filter(r=>r.dept1===dept1);
-  if (kw) data = data.filter(r=>(r.summary1||'').toLowerCase().includes(kw)||(r.summary2||'').toLowerCase().includes(kw));
+function filterDt(){
+  let d=getAct();
+  const m=document.getElementById('fMon')?.value;
+  const d1=document.getElementById('fD1')?.value;
+  const kw=(document.getElementById('fKw')?.value||'').toLowerCase();
+  if(m)d=d.filter(r=>r.month==parseInt(m));
+  if(d1)d=d.filter(r=>r.dept1===d1);
+  if(kw)d=d.filter(r=>(r.summary1||'').toLowerCase().includes(kw)||(r.summary2||'').toLowerCase().includes(kw));
+  const tb=document.getElementById('dtBody');
+  tb.innerHTML='';
+  if(!d.length){document.getElementById('dtEmpty').style.display='';document.getElementById('dtEmpty').textContent='暂无数据';return;}
+  document.getElementById('dtEmpty').style.display='none';
+  d.forEach(r=>tb.innerHTML+='<tr><td>'+r.month+'月</td><td>'+(r.dept1||'')+
+    '</td><td>'+(r.dept2||'')+'</td><td>'+(r.subject1||'')+'</td><td>'+(r.subject2||'')+
+    '</td><td style="text-align:right">¥'+fmt(r.amount)+'</td><td>'+(r.summary1||'')+
+    '</td><td>'+(r.summary2||'')+'</td></tr>');
+}
 
-  const tbody = document.getElementById('detailBody');
-  tbody.innerHTML = '';
-  if (data.length === 0) {
-    document.getElementById('detailEmpty').style.display = '';
-    document.getElementById('detailEmpty').textContent = '暂无数据';
-    return;
+function expCSV(){
+  let d=getAct();const m=document.getElementById('fMon')?.value;
+  const d1=document.getElementById('fD1')?.value;
+  const kw=(document.getElementById('fKw')?.value||'').toLowerCase();
+  if(m)d=d.filter(r=>r.month==parseInt(m));if(d1)d=d.filter(r=>r.dept1===d1);
+  if(kw)d=d.filter(r=>(r.summary1||'').toLowerCase().includes(kw)||(r.summary2||'').toLowerCase().includes(kw));
+  let csv='\uFEFF月份,一级部门,二级部门,一级科目,二级科目,金额,摘要1,摘要2\n';
+  d.forEach(r=>csv+=([r.month+'月',r.dept1,r.dept2,r.subject1,r.subject2,r.amount,r.summary1,r.summary2].map(v=>'"'+(v||'')+'"').join(',')+'\n'));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='费用明细_'+(curUser.dept1||'全部')+'.csv';a.click();
+}
+
+// ========== IMPORT ==========
+async function importActual(){
+  const fi=document.getElementById('impActFile');
+  if(!fi.files[0]){alert('请选择文件');return;}
+  const month=parseInt(document.getElementById('impActMonth').value);
+  const text=await fi.files[0].text();
+  const lines=text.split('\n').filter(l=>l.trim());
+  if(lines.length<2){alert('文件为空');return;}
+  const hdr=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+  const recs=[];
+  for(let i=1;i<lines.length;i++){
+    const v=lines[i].split(',').map(x=>x.trim().replace(/"/g,''));if(v.length<3)continue;
+    const row={};hdr.forEach((h,j)=>row[h]=(v[j]||'').trim());
+    const amt=parseFloat((row['金额(￥)']||row['金额']||'0').replace(/,/g,''))||0;
+    if(!amt)continue;
+    recs.push({month,dept1:row['一级部门']||'',dept2:row['二级部门']||'',
+      subject1:row['一级科目']||'',subject2:row['二级科目']||'',
+      summary1:row['摘要1']||'',summary2:row['摘要2']||'',amount:amt});
   }
-  document.getElementById('detailEmpty').style.display = 'none';
-  data.forEach(r => {
-    tbody.innerHTML += '<tr>'+
-      '<td>'+r.month+'月</td>'+
-      '<td>'+(r.dept1||'')+'</td>'+
-      '<td>'+(r.dept2||'')+'</td>'+
-      '<td>'+(r.subject1||'')+'</td>'+
-      '<td>'+(r.subject2||'')+'</td>'+
-      '<td style="text-align:right">¥'+numFmt(r.amount)+'</td>'+
-      '<td>'+(r.summary1||'')+'</td>'+
-      '<td>'+(r.summary2||'')+'</td>'+
-      '</tr>';
+  // Clear old month data then add new
+  APP_DATA.actuals=APP_DATA.actuals.filter(r=>r.month!==month);
+  APP_DATA.actuals.push(...recs);
+  document.getElementById('impActRes').innerHTML='<div class="alert alert-success">✅ 导入成功！共 '+recs.length+' 条（已清空 '+month+' 月旧数据）</div>';
+  renderOv();
+}
+
+async function importBudget(){
+  const fi=document.getElementById('impBgtFile');
+  if(!fi.files[0]){alert('请选择文件');return;}
+  const text=await fi.files[0].text();
+  const lines=text.split('\n').filter(l=>l.trim());
+  if(lines.length<2){alert('文件为空');return;}
+  const hdr=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+  const recs=[];
+  for(let i=1;i<lines.length;i++){
+    const v=lines[i].split(',').map(x=>x.trim().replace(/"/g,''));if(v.length<3)continue;
+    const row={};hdr.forEach((h,j)=>row[h]=(v[j]||'').trim());
+    const amt=parseFloat((row['金额(￥)']||row['金额']||'0').replace(/,/g,''))||0;
+    if(!amt)continue;
+    recs.push({month:parseInt(row['月份'])||0,dept1:row['一级部门']||'',dept2:row['二级部门']||'',
+      subject1:row['一级科目']||'',subject2:row['二级科目']||'',amount:amt});
+  }
+  APP_DATA.budgets.push(...recs);
+  document.getElementById('impBgtRes').innerHTML='<div class="alert alert-success">✅ 导入成功！共 '+recs.length+' 条</div>';
+  renderOv();
+}
+
+// ========== USERS ==========
+function renderUs(){
+  const tb=document.getElementById('usBody');tb.innerHTML='';
+  (APP_DATA.users||[]).forEach(u=>{
+    tb.innerHTML+='<tr><td>'+u.username+'</td><td>'+(u.dept1||'')+'</td><td>'+(u.dept2||'')+'</td><td>'+(u.role==='admin'?'管理员':'部门')+'</td></tr>';
   });
 }
 
-function exportDetailCSV() {
-  let data = CACHE.actuals;
-  if (currentUser.role === 'dept') {
-    data = data.filter(r => r.dept1 === currentUser.dept1);
-    if (currentUser.dept2) data = data.filter(r => r.dept2 === currentUser.dept2);
-  }
-  const month = document.getElementById('fMonth')?.value;
-  const dept1 = document.getElementById('fDept1')?.value;
-  const kw = (document.getElementById('fKeyword')?.value||'').toLowerCase();
-  if (month) data = data.filter(r=>r.month==parseInt(month));
-  if (dept1) data = data.filter(r=>r.dept1===dept1);
-  if (kw) data = data.filter(r=>(r.summary1||'').toLowerCase().includes(kw)||(r.summary2||'').toLowerCase().includes(kw));
+// ========== SETTINGS ==========
+function renderSet(){
+  const s=APP_DATA.settings||{};
+  const sel=document.getElementById('setCumMon');
+  sel.innerHTML='';[2,3,4,5,6,7,8,9,10,11,12,1].forEach(m=>
+    sel.innerHTML+='<option value="'+m+'"'+(s.cumMonth==m?' selected':'')+'>'+m+'月</option>');
+  document.getElementById('setCname').value=s.companyName||'杰西亚';
+}
+function saveSet(){
+  APP_DATA.settings.cumMonth=parseInt(document.getElementById('setCumMon').value);
+  APP_DATA.settings.companyName=document.getElementById('setCname').value;
+  alert('✅ 已保存');renderOv();
+}
 
-  let csv = '\uFEFF月份,一级部门,二级部门,一级科目,二级科目,金额,摘要1,摘要2\n';
-  data.forEach(r => {
-    csv += [r.month+'月',r.dept1,r.dept2,r.subject1,r.subject2,r.amount,r.summary1,r.summary2].map(v=>'"'+(v||'')+'"').join(',')+'\n';
+// ========== UTILS ==========
+function fmt(n){if(typeof n!=='number')n=parseFloat(n)||0;return n.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:0});}
+
+// ========== INIT ==========
+(function(){
+  // Month selector for import
+  [2,3,4,5,6].forEach(m=>{
+    const o=document.createElement('option');o.value=m;o.text=m+'月';
+    document.getElementById('impActMonth').appendChild(o);
   });
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = '费用明细_'+(currentUser.dept1||'全部')+'.csv';
-  a.click();
-}
-
-// ========== Import ==========
-async function importActualCSV() {
-  const fileInput = document.getElementById('importActualFile');
-  if (!fileInput.files[0]) { alert('请选择CSV文件'); return; }
-  const month = parseInt(document.getElementById('importActualMonth').value);
-  const text = await fileInput.files[0].text();
-  const lines = text.split('\n').filter(l=>l.trim());
-  if (lines.length < 2) { alert('文件为空'); return; }
-  const header = lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
-  const records = [];
-  for (let i=1; i<lines.length; i++) {
-    const vals = lines[i].split(',').map(v=>v.trim().replace(/"/g,''));
-    if (vals.length < 3) continue;
-    const row = {};
-    header.forEach((h,idx) => { row[h] = (vals[idx]||'').trim(); });
-    const amt = parseFloat((row['金额(￥)']||row['金额']||'0').replace(/,/g,'')) || 0;
-    if (amt === 0) continue;
-    records.push({
-      month,
-      dept1: row['一级部门']||'',
-      dept2: row['二级部门']||'',
-      subject1: row['一级科目']||'',
-      subject2: row['二级科目']||'',
-      summary1: row['摘要1']||'',
-      summary2: row['摘要2']||'',
-      amount: amt
-    });
-  }
-  try {
-    const res = await api('/actuals/import', { method:'POST', body:JSON.stringify({data:records, clearMonths:[month]}) });
-    await loadAll();
-    document.getElementById('importActualResult').innerHTML =
-      '<div class="alert alert-success">✅ 导入成功！共 '+records.length+' 条（清空'+month+'月旧数据后导入）</div>';
-    renderOverview();
-  } catch(e) {
-    document.getElementById('importActualResult').innerHTML =
-      '<div class="alert alert-error">❌ 导入失败：'+e.message+'</div>';
-  }
-}
-
-async function importBudgetCSV() {
-  const fileInput = document.getElementById('importBudgetFile');
-  if (!fileInput.files[0]) { alert('请选择CSV文件'); return; }
-  const text = await fileInput.files[0].text();
-  const lines = text.split('\n').filter(l=>l.trim());
-  if (lines.length < 2) { alert('文件为空'); return; }
-  const header = lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
-  const records = [];
-  for (let i=1; i<lines.length; i++) {
-    const vals = lines[i].split(',').map(v=>v.trim().replace(/"/g,''));
-    if (vals.length < 3) continue;
-    const row = {};
-    header.forEach((h,idx) => { row[h] = (vals[idx]||'').trim(); });
-    const amt = parseFloat((row['金额(￥)']||row['金额']||'0').replace(/,/g,'')) || 0;
-    if (amt === 0) continue;
-    records.push({
-      month: parseInt(row['月份'])||0,
-      dept1: row['一级部门']||'',
-      dept2: row['二级部门']||'',
-      subject1: row['一级科目']||'',
-      subject2: row['二级科目']||'',
-      amount: amt
-    });
-  }
-  try {
-    await api('/budgets/import', { method:'POST', body:JSON.stringify({data:records}) });
-    await loadAll();
-    document.getElementById('importBudgetResult').innerHTML =
-      '<div class="alert alert-success">✅ 导入成功！共 '+records.length+' 条</div>';
-  } catch(e) {
-    document.getElementById('importBudgetResult').innerHTML =
-      '<div class="alert alert-error">❌ 导入失败：'+e.message+'</div>';
-  }
-}
-
-async function clearData() {
-  const months = [];
-  document.querySelectorAll('#clearMonthsCheckboxes input:checked').forEach(cb => months.push(parseInt(cb.value)));
-  if (months.length === 0) { alert('请选择要清空的月份'); return; }
-  if (!confirm('确定清空 '+months.join(',')+' 月的实际数据？')) return;
-  try {
-    await api('/actuals', { method:'DELETE', body:JSON.stringify({months}) });
-    await loadAll();
-    alert('✅ 已清空');
-    renderOverview();
-  } catch(e) { alert('❌ 失败：'+e.message); }
-}
-
-// ========== Users ==========
-async function renderUsers() {
-  try {
-    const res = await api('/users');
-    CACHE.users = res.users || [];
-    const tbody = document.getElementById('usersTableBody');
-    tbody.innerHTML = '';
-    (res.users||[]).filter(u=>u.username!=='admin').forEach(u => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td>'+u.username+'</td><td>'+(u.dept1||'')+'</td><td>'+(u.dept2||'')+'</td>'+
-        '<td><button class="btn btn-danger btn-sm" onclick="deleteUser('+u.id+')">删除</button></td>';
-      tbody.appendChild(tr);
-    });
-  } catch(e) { console.error('Load users failed', e); }
-}
-
-async function showAddUserModal() {
-  const username = prompt('用户名（如：市场部）：');
-  if (!username) return;
-  const password = prompt('密码（默认 jsy1234）：') || 'jsy1234';
-  const dept1 = prompt('一级部门：');
-  if (!dept1) return;
-  const dept2 = prompt('二级部门（可选，直接回车跳过）：') || '';
-  try {
-    await api('/users', { method:'POST', body:JSON.stringify({
-      username, password, role:'dept', dept1, dept2, email:''
-    })});
-    alert('✅ 创建成功！\n用户名：'+username+'\n密码：'+password);
-    renderUsers();
-  } catch(e) { alert('❌ 失败：'+e.message); }
-}
-
-async function deleteUser(id) {
-  if (!confirm('确定删除此账号？')) return;
-  try {
-    await api('/users/'+id, { method:'DELETE' });
-    renderUsers();
-  } catch(e) { alert('❌ 失败：'+e.message); }
-}
-
-// ========== Settings ==========
-function renderSettings() {
-  const s = CACHE.settings;
-  const sel = document.getElementById('settingCumMonth');
-  sel.innerHTML = '';
-  [2,3,4,5,6,7,8,9,10,11,12,1].forEach(m => {
-    sel.innerHTML += '<option value="'+m+'"'+(s.cumMonth==m?' selected':'')+'>'+m+'月</option>';
-  });
-  document.getElementById('settingCompanyName').value = s.companyName || '杰西亚';
-}
-
-async function saveSettings() {
-  const settings = {
-    cumMonth: parseInt(document.getElementById('settingCumMonth').value),
-    companyName: document.getElementById('settingCompanyName').value
-  };
-  try {
-    await api('/settings', { method:'POST', body:JSON.stringify({settings}) });
-    CACHE.settings = {...CACHE.settings, ...settings};
-    alert('✅ 已保存');
-    renderOverview();
-  } catch(e) { alert('❌ 失败：'+e.message); }
-}
-
-// ========== Utils ==========
-function numFmt(n) {
-  if (typeof n !== 'number') n = parseFloat(n) || 0;
-  return n.toLocaleString('zh-CN', {minimumFractionDigits:0, maximumFractionDigits:0});
-}
-
-// ========== Init ==========
-(async function init() {
-  // Populate month selectors
-  const monthSel = document.getElementById('importActualMonth');
-  [2,3,4,5,6].forEach(m => {
-    monthSel.innerHTML += '<option value="'+m+'">'+m+'月</option>';
-  });
-  // Clear months checkboxes
-  const clearDiv = document.getElementById('clearMonthsCheckboxes');
-  [2,3,4,5].forEach(m => {
-    clearDiv.innerHTML += '<label style="display:block;margin:3px 0"><input type="checkbox" value="'+m+'"> '+m+'月</label>';
-  });
-
-  // Try auto-login
-  if (AUTH_TOKEN) {
-    try {
-      await loadAll();
-      // Verify token by trying an API call
-      currentUser = parseToken(AUTH_TOKEN);
-      if (currentUser) {
-        showApp();
-        return;
-      }
-    } catch(e) { /* token invalid, show login */ }
-  }
-  switchLoginTab('admin');
 })();
-
-function parseToken(token) {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload;
-  } catch(e) { return null; }
-}
 </script>
 </body>
 </html>
